@@ -1,0 +1,17 @@
+{
+  "name": "cs-546-lab10",
+  "version": "1.0.0",
+  "description": "Lab 10 for CS546",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Samuel Miller 10468142",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mongodb": "^6.5.0"
+  }
+}
