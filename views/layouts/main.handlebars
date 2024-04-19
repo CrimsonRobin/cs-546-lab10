@@ -4,4 +4,18 @@ don't forget to include your css and your client-side script file references in 
 for the theme, you can simply read the themePreference for the user and inject it into the body element
 {{!
 
+<body class="{{themePreference}}"> }}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
+    <script src="../../public/js/client_side_validation.js" defer></script>
+</head>
 <body class="{{themePreference}}">
+    {{{body}}}
+</body>
+</html>

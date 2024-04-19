@@ -43,3 +43,43 @@ ONLY USERS WITH A ROLE of admin SHOULD BE ABLE TO ACCESS THE /admin ROUTE!
 2. if the user is logged in, the middleware will "fall through" to the next route calling the next() callback.
 
 */
+
+import session from "express-session";
+import express from 'express';;
+import exphbs from 'express-handlebars';
+import configRoutes from './routes/index.js'
+
+const app = express();
+
+app.use('/public', express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
+app.use(session({
+    name: 'AuthenticationState',
+    secret: 'some secret string!',
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+app.use('/', (req, res, next) => {
+    let currentTimeStamp = new Date().toUTCString();
+    let reqMethod = req.method;
+    let reqRoute = req.originalUrl;
+    let authstate = "Non-Authenticated User";
+    if(req.session.user) {
+        authstate = "Authenticated User";
+    }
+    console.log(`[${currentTimeStamp}]: ${reqMethod} ${reqRoute} (${authstate})`);
+    
+});
+
+configRoutes(app);
+
+app.listen(3000, () => {
+  console.log("We've now got a server!");
+  console.log('Your routes will be running on http://localhost:3000');
+});

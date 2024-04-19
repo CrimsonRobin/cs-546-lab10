@@ -3,3 +3,38 @@
 registration handelbars
 
 --}}
+
+<main>
+    <form method="post" action="/register" name="signup-form" id="signup-form">
+        <label for="firstName">First Name:</label>
+        <input name="firstName" id="firstName" type="text">
+
+        <label for="lastName">Last Name:</label>
+        <input name="lastName" id="lastName" type="text">
+
+        <label for="username">Username:</label>
+        <input name="username" id="username" type="text">
+
+        <label for="password">Password:</label>
+        <input name="password" id="password" type="password">
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input name="confirmPassword" id="confirmPassword" type="password">
+
+        <label for="favoriteQuote">Favorite Quote:</label>
+        <input name="favoriteQuote" id="favoriteQuote" type="text">
+
+        <label for="themePreference">Theme Preference:</label>
+        <select name="themePreference" id="themePreference">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+        <label for="role">Role:</label>
+        <select name="role" id="role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button name="submitButton" id="submitButton">Submit</button>
+    </form>
+    <a href="/login">Already have an account? Click here to log-in</a>
+</main>
