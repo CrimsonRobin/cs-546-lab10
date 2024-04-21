@@ -66,15 +66,85 @@ app.use(session({
 );
 
 app.use('/', (req, res, next) => {
-    let currentTimeStamp = new Date().toUTCString();
-    let reqMethod = req.method;
-    let reqRoute = req.originalUrl;
     let authstate = "Non-Authenticated User";
     if(req.session.user) {
         authstate = "Authenticated User";
     }
-    console.log(`[${currentTimeStamp}]: ${reqMethod} ${reqRoute} (${authstate})`);
+    console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${authstate})`);
+
+    if(req.originalUrl === "/" && req.session.user && req.session.user.role === "admin") {
+        return res.redirect("/admin");
+    }
     
+    if (req.originalUrl === "/" && req.session.user && req.session.user.role === "user") {
+        return res.redirect("/user");
+    }
+    
+    if (req.originalUrl === "/" && !req.session.user) {
+        return res.redirect("/login");
+    }
+    
+    if (req.originalUrl !== "/") {
+        next();
+    }
+});
+
+app.use('/login', (req, res, next) => {
+    if(req.method === "GET") {
+        if(req.session.user && req.session.user.role === "admin") {
+            return res.redirect("/admin");
+        }
+        if(req.session.user && req.session.user.role === "user") {
+            return res.redirect("/user");
+        }
+    }
+});
+
+app.use('/register', (req, res, next) => {
+    if(req.method === "GET") {
+        if(req.session.user && req.session.user.role === "admin") {
+            return res.redirect("/admin");
+        }
+        if(req.session.user && req.session.user.role === "user") {
+            return res.redirect("/user");
+        }
+    }
+});
+
+app.use('/user', (req, res, next) => {
+    if(req.method === "GET") {
+        if(!req.session.user) {
+            return res.redirect("/login");
+        }
+        next();
+    }
+});
+
+app.use('/admin', (req, res, next) => {
+    if(req.method === "GET") {
+        if(!req.session.user) {
+            return res.redirect("/login");
+        }
+        if(req.session.user && req.session.user.role !== "admin") {
+            return res.status(403).render("error");
+        }
+
+        if(req.session.user && req.session.user.role === "admin") {
+            next();
+        }
+    }
+});
+
+app.use('/logout', (req, res, next) => {
+    if(req.method === "GET") {
+        if(!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        if(req.session.user) {
+            next();
+        }
+    }
 });
 
 configRoutes(app);
