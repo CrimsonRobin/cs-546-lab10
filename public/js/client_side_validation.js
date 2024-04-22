@@ -71,7 +71,7 @@ Don't forget to check that password and confirm password match on the registrati
 
     if(signInForm) {
         signInForm.addEventListener("submit", (event) => {
-            event.preventDefault();
+            
             let username = document.getElementById("username");
             let password = document.getElementById("password");
 
@@ -80,14 +80,15 @@ Don't forget to check that password and confirm password match on the registrati
                 password.value = validationMethods.checkString("Password", password.value, false, 8);
                 validationMethods.checkPassword(password.value);
             } catch (error) {
-                
+                event.preventDefault();
+                //show error
             }
         });
     };
 
     if(signUpForm) {
         signUpForm.addEventListener("submit", (event) => {
-            event.preventDefault();
+            
             let firstName = document.getElementById("firstName");
             let lastName = document.getElementById("lastName");
             let username = document.getElementById("username");
@@ -109,7 +110,8 @@ Don't forget to check that password and confirm password match on the registrati
                 themePreference.value = validationMethods.validValues("Theme Preference", themePreference.value.toLowerCase(), "light", "dark");
                 role.value = validationMethods.validValues("Role", role.value.toLowerCase(), "admin", "user");
             } catch (error) {
-                
+                event.preventDefault();
+                //show error
             }
         });
     };
