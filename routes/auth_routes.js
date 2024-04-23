@@ -1,6 +1,5 @@
 //import express, express router as shown in lecture code
 import express from "express";
-import session from "express-session";
 import helper from "../helpers.js";
 import {registerUser, loginUser} from "../data/users.js";
 
@@ -15,7 +14,7 @@ router
   .route('/register')
   .get(async (req, res) => {
     //code here for GET
-    return res.status(200).render("register");
+    return res.render("register", {themePreference: "light"});
   })
   .post(async (req, res) => {
     //code here for POST
@@ -25,25 +24,22 @@ router
       req.body.username = helper.checkString("Username", req.body.username.toLowerCase(), true, 5, 10);
       req.body.password = helper.checkString("Password", req.body.password, false, 8);
       helper.checkPassword(req.body.password);
-      req.body.favoriteQuote = helper.checkString("Favorite Quote", req.body.favoriteQuote, true, 20, 255);
+      req.body.favoriteQuote = helper.checkString("Favorite Quote", req.body.favoriteQuote, false, 20, 255);
       req.body.themePreference = helper.validValues("Theme Preference", req.body.themePreference.toLowerCase(), "light", "dark");
       req.body.role = helper.validValues("Role", req.body.role.toLowerCase(), "admin", "user");
-    } catch (e) {
-      return res.status(400).render("error", {error: e});
-    }
-    try {
+
       const {signupCompleted} = await registerUser(req.body.firstName, req.body.lastName, req.body.username, req.body.password, 
         req.body.favoriteQuote, req.body.themePreference, req.body.role);
       if(signupCompleted) {
         //true
-        return res.status(200).redirect("/login");
+        return res.redirect("/login");
       }
       else {
         //DB server is down, or some other internal server error
         return res.status(500).send("Internal Server Error");
       }
-    } catch (error) {
-      return res.status(400).render("error", {error: e});
+    } catch (e) {
+      return res.status(400).render("register", {error: e.message});
     }
   });
 
@@ -51,7 +47,7 @@ router
   .route('/login')
   .get(async (req, res) => {
     //code here for GET
-    return res.status(200).render("login");
+    return res.render("login", {themePreference: "light"});
   })
   .post(async (req, res) => {
     //code here for POST
@@ -59,38 +55,41 @@ router
       req.body.username = helper.checkString("Username", req.body.username.toLowerCase(), true, 5, 10);
       req.body.password = helper.checkString("Password", req.body.password, false, 8);
       helper.checkPassword(req.body.password);
-    } catch (e) {
-      return res.status(400).render("error", {error: e});
-    }
-    try {
+
       const user = await loginUser(req.body.username, req.body.password);
 
       req.session.user = { firstName: user.firstName, lastName: user.lastName, username: user.username, 
         favoriteQuote: user.favoriteQuote, themePreference: user.themePreference, role: user.role };
         
       if(user.role === "admin") {
-        return res.status(200).redirect("/admin");
+        return res.redirect("/admin");
       }
       else {
-        return res.status(200).redirect("/user");
+        return res.redirect("/user");
       }
     } catch (e) {
-      return res.status(400).render("error", {error: e});
+      return res.status(400).render("login", {error: e.message});
     }
   });
 
 router.route('/user').get(async (req, res) => {
   //code here for GET
-  return res.status(200).render("user");
+  const user = req.session.user;
+  return res.render("user", {firstName: user.firstName, lastName: user.lastName, currentTime: new Date().toUTCString(), 
+    role: user.role, favoriteQuote: user.favoriteQuote, themePreference: user.themePreference, role: user.role, admin: user.role === "admin" ? true : false});
 });
 
 router.route('/admin').get(async (req, res) => {
   //code here for GET
-  return res.status(200).render("admin");
+  const user = req.session.user;
+  return res.render("admin", {firstName: user.firstName, lastName: user.lastName, currentTime: new Date().toUTCString(), 
+    role: user.role, favoriteQuote: user.favoriteQuote, themePreference: user.themePreference});
 });
 
 router.route('/logout').get(async (req, res) => {
   //code here for GET
+  req.session.destroy();
+  return res.render("logout");
 });
 
 export default router;

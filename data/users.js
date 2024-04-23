@@ -17,11 +17,11 @@ export const registerUser = async (
   username = helper.checkString("Username", username.toLowerCase(), true, 5, 10);
   password = helper.checkString("Password", password, false, 8);
   helper.checkPassword(password);
-  favoriteQuote = helper.checkString("Favorite Quote", favoriteQuote, true, 20, 255);
+  favoriteQuote = helper.checkString("Favorite Quote", favoriteQuote, false, 20, 255);
   themePreference = helper.validValues("Theme Preference", themePreference.toLowerCase(), "light", "dark");
   role = helper.validValues("Role", role.toLowerCase(), "admin", "user");
 
-  const hash = await bcrypt.hash(password, 16);
+  const hash = await bcrypt.hash(password, 12);
 
   let NewUser = {
     firstName: firstName,
@@ -35,11 +35,11 @@ export const registerUser = async (
 
   const userCollection = await users();
 
-  if(userCollection.findOne({username: username}) !== null) {
+  if(await userCollection.findOne({username: username}) !== null) {
     throw new Error(`There is already a user with that username.`);
   } //check if username is in the database
 
-  const info = userCollection.insertOne(NewUser);
+  const info = await userCollection.insertOne(NewUser);
   if (!info.acknowledged || !info.insertedId) {
     throw new Error("Could not add user.");
   }
@@ -55,7 +55,7 @@ export const loginUser = async (username, password) => {
 
   const userCollection = await users();
 
-  const user = userCollection.findOne({username: username});
+  const user = await userCollection.findOne({username: username});
   if(user === null) {
     throw new Error(`Either the username or password is invalid`);
   } //check if username is in the database

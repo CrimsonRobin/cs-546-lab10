@@ -1,16 +1,15 @@
-{{!--
-
-login form handlebar template
-
---}}
-
 <main>
-    <form method="post" action="/login" id="signin-form">
-        <label for="username">Username:</label>
-        <input name="username" id="username" type="text">
-        <label for="password">Password:</label>
-        <input name="password" id="password" type="password">
-        <button name="submitButton" id="submitButton"></button>
-    </form>
-    <a href="/register">Click here to register!</a>
+    <div id="signin-div">
+            <form method="post" action="/login" id="signin-form">
+                <label for="username">Username:</label>
+                <input name="username" id="username" type="text"> <br>
+                <label for="password">Password:</label>
+                <input name="password" id="password" type="password"> <br>
+                <button name="submitButton" id="submitButton">Submit</button>
+            </form>
+    </div>
+    <div id="error-div">{{error}}</div>
 </main>
+<footer>
+    <a href="/register">Click here to register!</a>
+</footer>

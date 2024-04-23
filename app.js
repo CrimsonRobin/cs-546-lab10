@@ -45,7 +45,7 @@ ONLY USERS WITH A ROLE of admin SHOULD BE ABLE TO ACCESS THE /admin ROUTE!
 */
 
 import session from "express-session";
-import express from 'express';;
+import express from 'express';
 import exphbs from "express-handlebars";
 import configRoutes from './routes/index.js'
 
@@ -60,10 +60,8 @@ app.use(session({
 );
 
 app.use('/', (req, res, next) => {
-    let authstate = "Non-Authenticated User";
-    if(req.session.user) {
-        authstate = "Authenticated User";
-    }
+    let authstate = req.session.user ? "Authenticated User" : "Non-Authenticated User";
+    
     console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${authstate})`);
 
     if(req.originalUrl === "/" && req.session.user && req.session.user.role === "admin") {
@@ -93,6 +91,9 @@ app.use('/login', (req, res, next) => {
         }
         next();
     }
+    else {
+        next();
+    }
 });
 
 app.use('/register', (req, res, next) => {
@@ -105,6 +106,9 @@ app.use('/register', (req, res, next) => {
         }
         next();
     }
+    else {
+        next();
+    }
 });
 
 app.use('/user', (req, res, next) => {
@@ -112,6 +116,9 @@ app.use('/user', (req, res, next) => {
         if(!req.session.user) {
             return res.redirect("/login");
         }
+        next();
+    }
+    else {
         next();
     }
 });
@@ -129,6 +136,9 @@ app.use('/admin', (req, res, next) => {
             next();
         }
     }
+    else {
+        next();
+    }
 });
 
 app.use('/logout', (req, res, next) => {
@@ -140,6 +150,9 @@ app.use('/logout', (req, res, next) => {
         if(req.session.user) {
             next();
         }
+    }
+    else {
+        next();
     }
 });
 
